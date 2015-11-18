@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 
 public class BurnedCaloriesCalculatorActivity extends Activity
@@ -40,6 +41,7 @@ implements OnEditorActionListener{
     public int milesRan;
     public int feet;
     public int inches;
+    public String name;
 
 
     @Override
@@ -51,6 +53,7 @@ implements OnEditorActionListener{
         milesRan = 0;
         feet = 3;
         inches = 0;
+        name = "nobody";
 
         txtWeight = (EditText) findViewById(R.id.txtWeight);
         txtName = (EditText) findViewById(R.id.txtName);
@@ -81,6 +84,25 @@ implements OnEditorActionListener{
         txtName.setOnEditorActionListener(this);
 
         savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
+
+        sbarMilesRan.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                lblMilesRan.setText(seekBar.getProgress() + "mi");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekbar)
+            {
+
+            }
+        });
     }
 
     @Override
@@ -91,6 +113,7 @@ implements OnEditorActionListener{
         editor.putInt("milesRan", milesRan);
         editor.putInt("feet", feet);
         editor.putInt("inches", inches);
+        editor.putString("name", name);
         editor.commit();
 
         super.onPause();
@@ -104,11 +127,13 @@ implements OnEditorActionListener{
         milesRan = savedValues.getInt("milesRan", 0);
         feet = savedValues.getInt("feet", 3);
         inches = savedValues.getInt("inches", 0);
+        name = savedValues.getString("name", "nobody");
 
         txtWeight.setText(weight + "");
         sbarMilesRan.setProgress(milesRan);
         spinHeightFeet.setSelection(feet - 3);
         spinHeightInches.setSelection(inches);
+        txtName.setText(name);
 
         calculateAndDisplay();
     }
